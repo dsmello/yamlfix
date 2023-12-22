@@ -13,6 +13,8 @@ from _io import TextIOWrapper
 from yamlfix.adapters import SourceCodeFixer, Yaml
 from yamlfix.model import YamlfixConfig
 
+from ruyaml.scanner import ScannerError
+
 log = logging.getLogger(__name__)
 
 Files = Union[Tuple[TextIOWrapper], List[str]]
@@ -69,6 +71,7 @@ def fix_files(  # pylint: disable=too-many-branches
         )
 
     total_fixed = 0
+    total_failed = 0
 
     for file_ in files:
         if isinstance(file_, str):
@@ -80,7 +83,13 @@ def fix_files(  # pylint: disable=too-many-branches
             file_name = file_.name
 
         log.debug("Fixing file %s...", file_name)
-        fixed_source = fix_code(source, config)
+
+        try:
+            fixed_source = fix_code(source, config)
+        except ScannerError as exc:
+            log.error(f"Error parsing {file_name}: {exc}")
+            total_failed += 1
+            continue
 
         if fixed_source != source:
             changed = True
@@ -108,10 +117,11 @@ def fix_files(  # pylint: disable=too-many-branches
                 file_.write(fixed_source)
                 file_.truncate()
     log.info(
-        "Checked %d files: %d fixed, %d left unchanged",
+        "Checked %d files: %d fixed, %d left unchanged, %d failed",
         len(files),
         total_fixed,
         len(files) - total_fixed,
+        total_failed,
     )
 
     if dry_run is None:
@@ -157,8 +167,10 @@ def fix_code(source_code: str, config: Optional[YamlfixConfig] = None) -> str:
         jinja2 = ""
 
     yaml = Yaml(config=config)
-    fixer = SourceCodeFixer(yaml=yaml, config=config)
-
-    source_code = fixer.fix(source_code=source_code)
+    try:
+        fixer = SourceCodeFixer(yaml=yaml, config=config)
+        source_code = fixer.fix(source_code=source_code)
+    except ScannerError as exc:
+        raise exc
 
     return jinja2 + shebang + source_code
