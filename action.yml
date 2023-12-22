@@ -1,6 +1,12 @@
 # action.yml
 name: "yamlfix"
 description: "Check, lint and fix YAML files"
+author: "Davi Mello"
+
+branding:
+  color: "blue"
+  icon: "check-circle"
+
 inputs:
   file-path:
     description: "The file or directory to check"
