@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
     #   - uses: lyz-code/yamlfix@v1
-      - uses: dsmello/yamlfix
+      - uses: dsmello/yamlfix@v1.0.1-action
 ```
 
 
