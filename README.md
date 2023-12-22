@@ -43,6 +43,23 @@ show your appreciation. Thanks for that!
 And by sponsoring me, you are helping make these tools, that already help you,
 sustainable and healthy.
 
+## Github Actions
+
+To use this action, create a `.github/workflows/yamlfix.yml` file with the
+
+```yaml
+name: yamlfix
+on: [push, pull_request]
+jobs:
+  yamlfix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+    #   - uses: lyz-code/yamlfix@v1
+      - uses: dsmello/yamlfix
+```
+
+
 ## License
 
 GPLv3
