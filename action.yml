@@ -8,7 +8,7 @@ branding:
   icon: "check-circle"
 
 inputs:
-  file-path:
+  args:
     description: "The file or directory to check"
     required: false
     default: "."
@@ -18,4 +18,4 @@ runs:
   image: "Dockerfile"
 
   args:
-    - ${{ inputs.file-path }}
+    - ${{ inputs.args }}
