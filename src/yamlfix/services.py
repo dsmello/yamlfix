@@ -116,7 +116,9 @@ def fix_files(  # pylint: disable=too-many-branches
                 file_.seek(0)
                 file_.write(fixed_source)
                 file_.truncate()
-    log.info(
+
+    if total_failed:
+        log.error(
         "Checked %d files: %d fixed, %d left unchanged, %d failed",
         len(files),
         total_fixed,
@@ -124,7 +126,15 @@ def fix_files(  # pylint: disable=too-many-branches
         total_failed,
     )
 
-    if dry_run is None:
+    else:
+        log.info(
+            "Checked %d files: %d fixed, %d left unchanged",
+            len(files),
+            total_fixed,
+            len(files) - total_fixed,
+        )
+
+    if dry_run is None and not total_failed:
         return None
 
     return None, changed
