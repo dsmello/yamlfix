@@ -217,3 +217,13 @@ security:
 .PHONY: version
 version:
 	@python -c "import yamlfix.version; print(yamlfix.version.version_info())"
+
+.PHONY: docker
+docker:
+	@echo "---------------------"
+	@echo "- Building the image -"
+	@echo "---------------------"
+
+	docker build -t yamlfix .
+
+	@echo ""
