@@ -8,10 +8,15 @@ branding:
   icon: "check-circle"
 
 inputs:
-  args:
+  file_path:
     description: "The file or directory to check"
     required: false
     default: "."
+
+  args:
+    description: "Arguments to pass to the command"
+    required: false
+    default: ""
 
 runs:
   using: "docker"
@@ -19,3 +24,4 @@ runs:
 
   args:
     - ${{ inputs.args }}
+    - ${{ inputs.file_path }}

@@ -44,6 +44,11 @@ def _find_all_yaml_files(
     help="Check if file(s) needs fixing. No files will be written in this case.",
 )
 @click.option(
+    "--validate-only",
+    is_flag=True,
+    help="Validate the yaml(s) without fixing or formatting. Will enforce --check.",
+)
+@click.option(
     "--config-file",
     "-c",
     multiple=True,
@@ -79,6 +84,7 @@ def cli(  # pylint: disable=too-many-arguments
     files: Tuple[str],
     verbose: bool,
     check: bool,
+    validate_only: bool,
     config_file: Optional[List[str]],
     include: Optional[List[str]],
     exclude: Optional[List[str]],
@@ -109,6 +115,10 @@ def cli(  # pylint: disable=too-many-arguments
         sys.exit(0)
 
     load_logger(verbose)
+
+    if validate_only:
+        check = True
+
     log.info("YamlFix: %s files", "Checking" if check else "Fixing")
 
     config = YamlfixConfig()
@@ -116,9 +126,19 @@ def cli(  # pylint: disable=too-many-arguments
         config, config_file, _parse_env_vars_as_yamlfix_config(env_prefix.lower())
     )
 
+
+
+
     fixed_code, changed = services.fix_files(files_to_fix, check, config)
+
     for file_to_close in files_to_fix:
         file_to_close.close()
+
+    if fixed_code == "error":
+        sys.exit(1)
+
+    if validate_only:
+        sys.exit(0)
 
     if fixed_code is not None:
         print(fixed_code, end="")

@@ -34,3 +34,6 @@ class YamlfixConfig(ConfigSchema):
     preserve_quotes: bool = False
     quote_representation: str = "'"
     sequence_style: YamlNodeStyle = YamlNodeStyle.FLOW_STYLE
+
+
+class FailedToFix(Exception): ...

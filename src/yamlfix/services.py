@@ -11,7 +11,7 @@ from typing import List, Optional, Tuple, Union, overload
 from _io import TextIOWrapper
 
 from yamlfix.adapters import SourceCodeFixer, Yaml
-from yamlfix.model import YamlfixConfig
+from yamlfix.model import YamlfixConfig, FailedToFix
 
 from ruyaml.scanner import ScannerError
 
@@ -134,7 +134,10 @@ def fix_files(  # pylint: disable=too-many-branches
             len(files) - total_fixed,
         )
 
-    if dry_run is None and not total_failed:
+    if total_failed:
+        return "error", changed
+
+    if dry_run is None:
         return None
 
     return None, changed
